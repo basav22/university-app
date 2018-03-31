@@ -4,7 +4,8 @@ import React from "react";
 // Functional component
  function Title_old(props) {
     // JSX 
-    return <h1>{props.name} {props.lastName}</h1>;
+    // props.newProp = "adas",
+    return <h1>{props.name} {props.lastName} </h1>;
     // return React.createElement('h1', {})
 }
 

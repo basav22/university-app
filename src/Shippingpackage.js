@@ -16,6 +16,6 @@ export default function ShippingPackage(props) {
             <label>Package ID: {packageId}</label>
             <span>Rs. {amount}</span>
         </div>
-        <label>Order No: {orderId}</label>
+        <label>Order No.: {orderId}</label>
     </div>
 }
