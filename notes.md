@@ -17,3 +17,7 @@ API calls -
 - 2 ways
 1. fetch api request - new API given by latest browsers
 2. axios library - npm package - and use its apis
+
+- Difference between React.PureComponent and React.Component ??
+- PureComponent is more performant than Component
+- PureComponent implements shouldComponentUpdate() which shallow checks prevState and newState. If refs are different, return true else return false;

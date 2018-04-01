@@ -2,6 +2,7 @@
 import React from 'react';
 import ShippingPackage from './Shippingpackage';
 import Title from './title';
+import AddPackageForm from './AddPackageForm';
 
 // function addToList(packageObj) {
 //   if (!packageObj)
@@ -54,19 +55,13 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      shippingPackageList: [
-        {
-          orderId: 12421,
-          packageId: 424,
-          amount: 142
-        },
-        {
-          orderId: 5324,
-          packageId: 23,
-          amount: 12
-        }
-      ],
-      name: "pune"
+      shippingPackageList: [],
+      showAddForm: false,
+      newPackage: {
+        packageId: 1,
+        orderId: 2,
+        amount: 3
+      }
     }
 
     this.newPackage = {
@@ -75,39 +70,58 @@ class App extends React.Component {
       amount: 90
     };
 
+    // event handler declarations to maintain context
+    this.addToList = this.addToList.bind(this);
+    this.setNewData = this.setNewData.bind(this);
+  }
+
+  getData() {
+    return fetch("http://www.mocky.io/v2/5ac076aa2f0000560096115e", {
+      headers: {},
+      method: "GET"
+    }).then(res => {
+      if(res.ok) {
+        return Promise.resolve(res.json())
+      }
+    });
+  }
+
+  setNewData(key, value) {
+    this.setState({
+      newPackage: {...this.state.newPackage, [key]: value}
+    })
+  }
+
+
+
+  showForm() {
+    this.setState({
+      showAddForm: true
+    })
   }
 
   addToList() {
-    if (!this.newPackage)
+    const newPackage = this.state.newPackage;
+    if (! newPackage)
       return;
     // DO NOT DO THIS
     // this.state.shippingPackageList.push(this.newPackage);
 
-    // this.setState({
-    //   shippingPackageList:
-    //     [...this.state.shippingPackageList, this.newPackage]
-    // });
-
-    this.state.shippingPackageList.push(this.newPackage);
     this.setState({
-      shippingPackageList: this.state.shippingPackageList
+      shippingPackageList:
+        [...this.state.shippingPackageList, newPackage],
+      showAddForm: false
     });
+
+    // this.state.shippingPackageList.push(this.newPackage);
+    // this.setState({
+    //   shippingPackageList: this.state.shippingPackageList
+    // });
 
     // this.setState(() => ({
     //   shippingPackageList:
     //     [...this.state.shippingPackageList, this.newPackage]
     // }))
-  }
-  myFUn() {
-    var list = [1, 3]
-    console.log(list);
-
-    this.updateList(list, 4)
-    console.log(list);
-  }
-
-  updateList(list, item) {
-    list.add(item);
   }
 
   // just after the first render -called only once
@@ -115,28 +129,48 @@ class App extends React.Component {
     // API call
     // Get List
     // Set state
-    console.log("did mount")
+    console.log("did mount");
+    this.getData().then(shippingPackageList => {
+      // console.log(shippingPackageList);
+      this.setState({
+        shippingPackageList
+      });
+    });;
   }
   
   // just before the first render - called only once
   componentWillMount() {
     console.log("will mount")
   }
+  
+  // is for performance things - optimization
+  // shouldComponentUpdate(props, state) {
+  //   // logic
+  //   return false;
+  // }
 
   // calls after every update and rerender
   componentDidUpdate() {
     console.log("did update")
+    // this.setState({
+    //   showAddForm: false
+    // })
   }
 
   render() {
+    const { showAddForm, shippingPackageList} = this.state;
     return <div>
-      <p>{this.state.name} {this.state.lastName}</p>
       <Title>To Deliver List</Title>
       {
-        this.state.shippingPackageList
+        shippingPackageList
           .map(shippingpackage => <ShippingPackage key={shippingpackage.orderId} {...shippingpackage} />)
       }
-      <button type="button" onClick={() => this.addToList()}>Add To List</button>
+      {!showAddForm && <button type="button" onClick={() => this.showForm()}>Add To List</button>}
+      {showAddForm ? 
+        <AddPackageForm 
+          {...this.state.newPackage} 
+          setNewData={this.setNewData}
+          onAdd={this.addToList}/> : null}
     </div>
   }
 }
