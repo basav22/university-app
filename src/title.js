@@ -16,6 +16,10 @@ export default class Title extends React.Component{
     }
 
     render() {
-        return <h3>{this.props.children}</h3>;
+        return <h3 style={{color: "red"}}>
+            {this.props.children}
+        </h3>;
     }
 }
+
+// <Title>asdasdafe adas</Title>

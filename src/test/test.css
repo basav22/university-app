@@ -1,0 +1,23 @@
+.avatar-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+p.avatar-content {
+    margin-left: 10px;
+}
+
+.bottom-navigation-item-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.bottom-navigation-item-wrapper.active {
+    color: blue;
+}
+
+.bottom-navigation-wrapper {
+    display: flex;
+    justify-content: space-around;
+    border: 1px solid black;
+}

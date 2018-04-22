@@ -3,6 +3,7 @@ import React from 'react';
 import ShippingPackage from './Shippingpackage';
 import Title from './title';
 import AddPackageForm from './AddPackageForm';
+import Loader from './Loader';
 
 // function addToList(packageObj) {
 //   if (!packageObj)
@@ -57,6 +58,8 @@ class App extends React.Component {
     this.state = {
       shippingPackageList: [],
       showAddForm: false,
+      showLoader: false,
+      error: "",
       newPackage: {
         packageId: 1,
         orderId: 2,
@@ -76,19 +79,24 @@ class App extends React.Component {
   }
 
   getData() {
-    return fetch("http://www.mocky.io/v2/5ac076aa2f0000560096115e", {
-      headers: {},
-      method: "GET"
-    }).then(res => {
-      if(res.ok) {
-        return Promise.resolve(res.json())
-      }
-    });
+    return fetch(
+      "http://www.mocky.io/v2/5ac076aa2f0000560096115e", {
+        headers: {},
+        method: "GET"
+      }).then(res => {
+        if (res.ok) {
+          return Promise.resolve(res.json())
+        } else {
+          return Promise.reject({
+            error: "Something went wrong"
+          })
+        }
+      });
   }
 
   setNewData(key, value) {
     this.setState({
-      newPackage: {...this.state.newPackage, [key]: value}
+      newPackage: { ...this.state.newPackage, [key]: value }
     })
   }
 
@@ -102,7 +110,7 @@ class App extends React.Component {
 
   addToList() {
     const newPackage = this.state.newPackage;
-    if (! newPackage)
+    if (!newPackage)
       return;
     // DO NOT DO THIS
     // this.state.shippingPackageList.push(this.newPackage);
@@ -130,19 +138,30 @@ class App extends React.Component {
     // Get List
     // Set state
     console.log("did mount");
-    this.getData().then(shippingPackageList => {
-      // console.log(shippingPackageList);
-      this.setState({
-        shippingPackageList
+
+    // show Loader
+    this.setState({ showLoader: true });
+
+    this.getData()
+      .then(shippingPackageList => {
+        // console.log(shippingPackageList);
+        this.setState({
+          shippingPackageList,
+          showLoader: false,
+          error: ""
+        });
+      })
+      .catch(err => {
+        console.log(err.message);
+        this.setState({error: err.message, showLoader: false});
       });
-    });;
   }
-  
+
   // just before the first render - called only once
   componentWillMount() {
     console.log("will mount")
   }
-  
+
   // is for performance things - optimization
   // shouldComponentUpdate(props, state) {
   //   // logic
@@ -157,20 +176,36 @@ class App extends React.Component {
     // })
   }
 
+  render_old2() {
+    return <ShippingPackage
+      packageId={232}
+      orderId={44}
+      amount={90}
+    />
+  }
+
   render() {
-    const { showAddForm, shippingPackageList} = this.state;
+    const { showAddForm, shippingPackageList, showLoader, error } = this.state;
     return <div>
       <Title>To Deliver List</Title>
       {
         shippingPackageList
-          .map(shippingpackage => <ShippingPackage key={shippingpackage.orderId} {...shippingpackage} />)
+          .map(shippingpackage =>
+            <ShippingPackage
+              key={shippingpackage.orderId}
+              {...shippingpackage}
+            />)
       }
+
+      <Loader showLoader={showLoader} />
+      {error && <p>{error}</p>}   
+
       {!showAddForm && <button type="button" onClick={() => this.showForm()}>Add To List</button>}
-      {showAddForm ? 
-        <AddPackageForm 
-          {...this.state.newPackage} 
+      {showAddForm &&
+        <AddPackageForm
+          {...this.state.newPackage}
           setNewData={this.setNewData}
-          onAdd={this.addToList}/> : null}
+          onAdd={this.addToList} />}
     </div>
   }
 }

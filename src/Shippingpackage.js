@@ -12,7 +12,7 @@ export default function ShippingPackage(props) {
         justifyContent: "space-between"
     };
     return <div className="package-wrapper">
-        <div style={headerWrapperStyle}>
+        <div style={ headerWrapperStyle }>
             <label>Package ID: {packageId}</label>
             <span>Rs. {amount}</span>
         </div>
